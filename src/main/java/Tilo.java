@@ -28,44 +28,84 @@ public class Tilo {
     }
 
     public static String readUserInput(Scanner in) {
-        String line = in.nextLine();
-        printBorder();
-        return line;
+        return in.nextLine();
     }
 
-    public static void addTask(String[] tasks, int taskCount, String line) {
+    public static void addTask(Task[] tasks, int taskCount, String line) {
         System.out.println(INDENT + "added: " + line);
-        tasks[taskCount] = line;
+        tasks[taskCount] = new Task(line);
     }
 
-    public static void listTasks(String[] tasks, int taskCount) {
+    public static void listTasks(Task[] tasks, int taskCount) {
         for (int i = 0; i < taskCount; i += 1) {
-            System.out.println(INDENT + (i + 1) + ". " + tasks[i]);
+            Task task = tasks[i];
+            System.out.println(INDENT + (i + 1) + ". [" + task.getStatusIcon() + "] " + task.description);
         }
+    }
+
+    public static void markTask(Task task) {
+        task.markAsDone();
+        System.out.println(INDENT + "Nice! I've marked this task as done:");
+        System.out.println(INDENT + "  [" + task.getStatusIcon() + "] " + task.description);
+    }
+
+    public static void unmarkTask(Task task) {
+        task.markAsNotDone();
+        System.out.println(INDENT + "OK, I've marked this task as not done yet:");
+        System.out.println(INDENT + "  [" + task.getStatusIcon() + "] " + task.description);
     }
 
     public static void main(String[] args) {
         sayHi();
         String userInput;
         Scanner in = new Scanner(System.in);
-        String[] tasks = new String[taskListSize];
+        Task[] tasks = new Task[taskListSize];
         int taskCount = 0;
 
         do {
             userInput = readUserInput(in);
-            switch (userInput) {
+            printBorder();
+            String[] words = userInput.split(" ");
+            switch (words[0]) {
                 case "list":
-                    listTasks(tasks, taskCount);
+                    if (taskCount > 0) {
+                        listTasks(tasks, taskCount);
+                    } else {
+                        System.out.println(INDENT + "No tasks to list.");
+                    }
                     break;
                 case "bye":
                     break;
                 case "":
+                    break;
+                case "mark" :
+                    if (taskCount == 0) {
+                        System.out.println(INDENT + "No tasks to mark.");
+                    }
+                    else if (words.length < 2) {
+                        System.out.println(INDENT + "Please specify the task number to mark.");
+                    } else {
+                        int taskNum = Integer.parseInt(words[1]) - 1;
+                        markTask(tasks[taskNum]);
+                    }
+                    break;
+                case "unmark" :
+                    if (taskCount == 0) {
+                        System.out.println(INDENT + "No tasks to unmark.");
+                    }
+                    else if (words.length < 2) {
+                        System.out.println(INDENT + "Please specify the task number to unmark.");
+                    } else {
+                        int taskNum = Integer.parseInt(words[1]) - 1;
+                        unmarkTask(tasks[taskNum]);
+                    }
                     break;
                 default:
                     addTask(tasks, taskCount, userInput);
                     taskCount += 1;
                     break;
             }
+            printBorder();
         } while (!userInput.equals("bye"));
         sayGoodbye();
     }
