@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class Tilo {
+    public static final int taskListSize = 100;
     public static final String INDENT = "\t";
     public static final String BORDER = "----------------------------------------";
     public static final String LOGO = INDENT + "___________.___.____     ________\n"
@@ -32,19 +33,40 @@ public class Tilo {
         return line;
     }
 
-    public static void echo(String line) {
-        System.out.println(INDENT + line);
+    public static void addTask(String[] tasks, int taskCount, String line) {
+        System.out.println(INDENT + "added: " + line);
+        tasks[taskCount] = line;
+    }
+
+    public static void listTasks(String[] tasks, int taskCount) {
+        for (int i = 0; i < taskCount; i += 1) {
+            System.out.println(INDENT + (i + 1) + ". " + tasks[i]);
+        }
     }
 
     public static void main(String[] args) {
         sayHi();
-        String userInput = "";
+        String userInput;
         Scanner in = new Scanner(System.in);
+        String[] tasks = new String[taskListSize];
+        int taskCount = 0;
 
-        while (!userInput.equals("bye")) {
-            echo(userInput);
+        do {
             userInput = readUserInput(in);
-        }
+            switch (userInput) {
+                case "list":
+                    listTasks(tasks, taskCount);
+                    break;
+                case "bye":
+                    break;
+                case "":
+                    break;
+                default:
+                    addTask(tasks, taskCount, userInput);
+                    taskCount += 1;
+                    break;
+            }
+        } while (!userInput.equals("bye"));
         sayGoodbye();
     }
 }
