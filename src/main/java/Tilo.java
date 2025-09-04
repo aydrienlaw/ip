@@ -53,6 +53,19 @@ public class Tilo {
         tasks.add(newDeadline);
     }
 
+    public static void addEvent(String inputLine) {
+        String fromPrefix = " /from ";
+        String toPrefix = " /to ";
+        int fromIndex = inputLine.lastIndexOf(fromPrefix);
+        int toIndex = inputLine.lastIndexOf(toPrefix);
+
+        String description = inputLine.substring(0, fromIndex);
+        String from = inputLine.substring(fromIndex + fromPrefix.length(), toIndex);
+        String to = inputLine.substring(toIndex + toPrefix.length());
+        Task newEvent = new Event(description, from, to);
+        tasks.add(newEvent);
+    }
+
     public static void handleAddTaskCommand(String command, String inputLine) {
         if (inputLine.isBlank()) {
             System.out.println(INDENT + "The description of a task cannot be empty.");
@@ -65,6 +78,9 @@ public class Tilo {
             break;
         case "deadline":
             addDeadline(inputLine);
+            break;
+        case "event":
+            addEvent(inputLine);
             break;
         default:
             addTask(inputLine);
@@ -130,6 +146,7 @@ public class Tilo {
         switch (command) {
         case "todo":
         case "deadline":
+        case "event":
             try {
                 handleAddTaskCommand(command, words[1]);
             } catch (ArrayIndexOutOfBoundsException e) {
