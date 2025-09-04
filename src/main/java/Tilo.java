@@ -16,6 +16,7 @@ public class Tilo {
     public static boolean isRunning;
     public static List<Task> tasks = new ArrayList<>(TASK_LIST_SIZE);
 
+
     public static void printBorder() {
         System.out.println(INDENT + BORDER);
     }
@@ -33,9 +34,33 @@ public class Tilo {
     }
 
     public static void addTask(String line) {
-        Task newTask = new Task(line);
-        tasks.add(newTask);
-        System.out.println(INDENT + "added: " + line);
+        Task newToDo = new Task(line);
+        tasks.add(newToDo);
+    }
+
+    public static void addToDo(String line) {
+        Task newToDo = new ToDo(line);
+        tasks.add(newToDo);
+    }
+
+    public static void handleAddTaskCommand(String command, String line) {
+        if (line.isBlank()) {
+            System.out.println(INDENT + "The description of a task cannot be empty.");
+            return;
+        }
+
+        switch (command) {
+        case "todo":
+            addToDo(line);
+            break;
+        default:
+            addTask(line);
+            break;
+        }
+
+        System.out.println(INDENT + "Got it. I've added this task: ");
+        System.out.println(INDENT + " " + tasks.get(tasks.size() - 1));
+        System.out.println(INDENT + "Now you have " + tasks.size() + " in the list");
     }
 
     public static void listTasks() {
@@ -61,7 +86,7 @@ public class Tilo {
         System.out.println(INDENT + "  " + task);
     }
 
-    private static void handleMarkCommand(String[] words, boolean isMarking) {
+    public static void handleMarkCommand(String[] words, boolean isMarking) {
         if (tasks.isEmpty()) {
             System.out.println(INDENT + "No tasks to " + (isMarking ? "mark" : "unmark") + ".");
             return;
@@ -80,16 +105,23 @@ public class Tilo {
             } else {
                 unmarkTask(task);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
             System.out.println(INDENT + "Please enter a valid task number.");
         }
     }
 
-    private static void processCommand(String userInput) {
+    public static void processCommand(String userInput) {
         String[] words = userInput.split(" ", 2);
         String command = words[0].toLowerCase();
 
         switch (command) {
+        case "todo":
+            try {
+                handleAddTaskCommand(command, words[1]);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println(INDENT + "The description of a task cannot be empty.");
+            }
+            break;
         case "list":
             listTasks();
             break;
@@ -103,10 +135,11 @@ public class Tilo {
             isRunning = false;
             break;
         default:
-            addTask(userInput);
+            handleAddTaskCommand("add", userInput);
             break;
         }
     }
+
 
     public static void main(String[] args) {
         sayHi();
