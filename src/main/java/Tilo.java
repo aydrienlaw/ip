@@ -33,28 +33,41 @@ public class Tilo {
         printBorder();
     }
 
-    public static void addTask(String line) {
-        Task newToDo = new Task(line);
+    public static void addTask(String description) {
+        Task newToDo = new Task(description);
         tasks.add(newToDo);
     }
 
-    public static void addToDo(String line) {
-        Task newToDo = new ToDo(line);
+    public static void addToDo(String description) {
+        Task newToDo = new ToDo(description);
         tasks.add(newToDo);
     }
 
-    public static void handleAddTaskCommand(String command, String line) {
-        if (line.isBlank()) {
+    public static void addDeadline(String inputLine) {
+        String byPrefix = " /by ";
+        int byIndex = inputLine.lastIndexOf(byPrefix);
+
+        String description = inputLine.substring(0, byIndex);
+        String by = inputLine.substring(byIndex + byPrefix.length());
+        Task newDeadline = new Deadline(description, by);
+        tasks.add(newDeadline);
+    }
+
+    public static void handleAddTaskCommand(String command, String inputLine) {
+        if (inputLine.isBlank()) {
             System.out.println(INDENT + "The description of a task cannot be empty.");
             return;
         }
 
         switch (command) {
         case "todo":
-            addToDo(line);
+            addToDo(inputLine);
+            break;
+        case "deadline":
+            addDeadline(inputLine);
             break;
         default:
-            addTask(line);
+            addTask(inputLine);
             break;
         }
 
@@ -116,6 +129,7 @@ public class Tilo {
 
         switch (command) {
         case "todo":
+        case "deadline":
             try {
                 handleAddTaskCommand(command, words[1]);
             } catch (ArrayIndexOutOfBoundsException e) {
