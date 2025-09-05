@@ -3,96 +3,120 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Tilo {
-    public static final int TASK_LIST_SIZE = 100;
-    public static final String INDENT = "\t";
-    public static final String BORDER = "----------------------------------------";
-    public static final String LOGO = INDENT + "___________.___.____     ________\n"
+    private static final int TASK_LIST_SIZE = 100;
+    private static final String INDENT = "\t";
+    private static final String BORDER = "----------------------------------------";
+    private static final String LOGO = INDENT + "___________.___.____     ________\n"
             + INDENT + "\\__    ___/|   |    |   \\_____  \\\n"
             + INDENT + "   |    |  |   |    |    /   |   \\\n"
             + INDENT + "   |    |  |   |    |___/    |    \\\n"
             + INDENT + "   |____|  |___|_______ \\_______  /\n"
             + INDENT + "                       \\/       \\/";
 
-    public static boolean isRunning;
-    public static List<Task> tasks = new ArrayList<>(TASK_LIST_SIZE);
+    private boolean isRunning;
+    private final List<Task> tasks;
+    private final Scanner scanner;
 
+    public Tilo() {
+        this.tasks = new ArrayList<>(TASK_LIST_SIZE);
+        this.scanner = new Scanner(System.in);
+        this.isRunning = false;
+    }
 
-    public static void printBorder() {
+    private void printBorder() {
         System.out.println(INDENT + BORDER);
     }
 
-    public static void sayHi() {
+    private void sayHi() {
         String greetMsg = INDENT + "Hello! I'm Tilo\n"
                 + INDENT + "What can I do for you?";
         System.out.println(LOGO + "\n" + greetMsg);
         printBorder();
     }
 
-    public static void sayGoodbye() {
+    private void sayGoodbye() {
         System.out.println(INDENT + "Bye. Hope to see you again soon!");
         printBorder();
     }
 
-    public static void addTask(String description) {
-        Task newToDo = new Task(description);
-        tasks.add(newToDo);
+    private void addTask(String description) {
+        Task newTask = new Task(description);
+        tasks.add(newTask);
+        printTaskAdded(newTask);
     }
 
-    public static void addToDo(String description) {
+    private void addToDo(String description) {
         Task newToDo = new ToDo(description);
         tasks.add(newToDo);
+        printTaskAdded(newToDo);
     }
 
-    public static void addDeadline(String inputLine) {
+    private void addDeadline(String inputLine) {
         String byPrefix = " /by ";
         int byIndex = inputLine.lastIndexOf(byPrefix);
 
-        String description = inputLine.substring(0, byIndex);
-        String by = inputLine.substring(byIndex + byPrefix.length());
+        if (byIndex == -1) {
+            System.out.println(INDENT + "Deadline format should be: deadline <description> /by <date>");
+            return;
+        }
+
+        String description = inputLine.substring(0, byIndex).trim();
+        String by = inputLine.substring(byIndex + byPrefix.length()).trim();
+
+        if (description.isEmpty() || by.isEmpty()) {
+            System.out.println(INDENT + "Both description and deadline date are required.");
+            return;
+        }
+
         Task newDeadline = new Deadline(description, by);
         tasks.add(newDeadline);
+        printTaskAdded(newDeadline);
     }
 
-    public static void addEvent(String inputLine) {
+    private void addEvent(String inputLine) {
         String fromPrefix = " /from ";
         String toPrefix = " /to ";
         int fromIndex = inputLine.lastIndexOf(fromPrefix);
         int toIndex = inputLine.lastIndexOf(toPrefix);
 
-        String description = inputLine.substring(0, fromIndex);
-        String from = inputLine.substring(fromIndex + fromPrefix.length(), toIndex);
-        String to = inputLine.substring(toIndex + toPrefix.length());
-        Task newEvent = new Event(description, from, to);
-        tasks.add(newEvent);
-    }
-
-    public static void handleAddTaskCommand(String command, String inputLine) {
-        if (inputLine.isBlank()) {
-            System.out.println(INDENT + "The description of a task cannot be empty.");
+        if (fromIndex == -1 || toIndex == -1) {
+            System.out.println(INDENT + "Event format should be: event <description> /from <start> /to <end>");
             return;
         }
 
-        switch (command) {
-        case "todo":
-            addToDo(inputLine);
-            break;
-        case "deadline":
-            addDeadline(inputLine);
-            break;
-        case "event":
-            addEvent(inputLine);
-            break;
-        default:
-            addTask(inputLine);
-            break;
+        String description = inputLine.substring(0, fromIndex).trim();
+        String from = inputLine.substring(fromIndex + fromPrefix.length(), toIndex).trim();
+        String to = inputLine.substring(toIndex + toPrefix.length()).trim();
+
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            System.out.println(INDENT + "Description, start time, and end time are all required.");
+            return;
         }
 
+        Task newEvent = new Event(description, from, to);
+        tasks.add(newEvent);
+        printTaskAdded(newEvent);
+    }
+
+    private boolean isInputValid(String[] words) {
+        if (words.length < 2) {
+            System.out.println(INDENT + "Invalid Input.");
+            return true;
+        }
+        if (words[1].trim().isEmpty()) {
+            System.out.println(INDENT + "Invalid input.");
+            return true;
+        }
+        return false;
+    }
+
+    private void printTaskAdded(Task task) {
         System.out.println(INDENT + "Got it. I've added this task: ");
-        System.out.println(INDENT + " " + tasks.get(tasks.size() - 1));
+        System.out.println(INDENT + " " + task);
         System.out.println(INDENT + "Now you have " + tasks.size() + " in the list");
     }
 
-    public static void listTasks() {
+    private void listTasks() {
         if (tasks.isEmpty()) {
             System.out.println(INDENT + "No tasks to list.");
             return;
@@ -103,31 +127,30 @@ public class Tilo {
         }
     }
 
-    public static void markTask(Task task) {
+    private void markTask(Task task) {
         task.markAsDone();
         System.out.println(INDENT + "Nice! I've marked this task as done:");
         System.out.println(INDENT + "  " + task);
     }
 
-    public static void unmarkTask(Task task) {
+    private void unmarkTask(Task task) {
         task.markAsNotDone();
         System.out.println(INDENT + "OK, I've marked this task as not done yet:");
         System.out.println(INDENT + "  " + task);
     }
 
-    public static void handleMarkCommand(String[] words, boolean isMarking) {
+    private void handleMarkCommand(String[] words, boolean isMarking) {
         if (tasks.isEmpty()) {
             System.out.println(INDENT + "No tasks to " + (isMarking ? "mark" : "unmark") + ".");
             return;
         }
 
-        if (words.length < 2) {
-            System.out.println(INDENT + "Please specify the task number to " + (isMarking ? "mark" : "unmark") + ".");
-            return;
-        }
-
         try {
             int taskNum = Integer.parseInt(words[1]) - 1;
+            if (taskNum < 0 || taskNum >= tasks.size()) {
+                throw new IndexOutOfBoundsException();
+            }
+
             Task task = tasks.get(taskNum);
             if (isMarking) {
                 markTask(task);
@@ -139,19 +162,24 @@ public class Tilo {
         }
     }
 
-    public static void processCommand(String userInput) {
+    private void processCommand(String userInput) {
+        if (userInput == null || userInput.trim().isEmpty()) {
+            System.out.println(INDENT + "Please enter a command.");
+            return;
+        }
+
         String[] words = userInput.split(" ", 2);
         String command = words[0].toLowerCase();
 
         switch (command) {
         case "todo":
+            addToDo(words[1]);
+            break;
         case "deadline":
+            addDeadline(words[1]);
+            break;
         case "event":
-            try {
-                handleAddTaskCommand(command, words[1]);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println(INDENT + "The description of a task cannot be empty.");
-            }
+            addEvent(words[1]);
             break;
         case "list":
             listTasks();
@@ -166,25 +194,27 @@ public class Tilo {
             isRunning = false;
             break;
         default:
-            handleAddTaskCommand("add", userInput);
+            addTask(userInput);
             break;
         }
     }
 
-
-    public static void main(String[] args) {
+    public void run() {
         sayHi();
-        String userInput;
-        Scanner in = new Scanner(System.in);
         isRunning = true;
 
-        do {
-            userInput = in.nextLine();
+        while (isRunning) {
+            String userInput = scanner.nextLine();
             printBorder();
             processCommand(userInput);
             printBorder();
-        } while (isRunning);
+        }
 
         sayGoodbye();
+    }
+
+    public static void main(String[] args) {
+        Tilo tilo = new Tilo();
+        tilo.run();
     }
 }
