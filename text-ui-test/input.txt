@@ -1,0 +1,8 @@
+todo borrow book
+deadline return book /by 311225 2359
+event project meeting /from 311225 1400 /to 311225 1600
+mark 1
+mark 2
+mark 3
+unmark 2
+bye
