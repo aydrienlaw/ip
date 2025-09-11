@@ -1,3 +1,10 @@
+package tilo;
+
+import tilo.task.Deadline;
+import tilo.task.Event;
+import tilo.task.Task;
+import tilo.task.ToDo;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
