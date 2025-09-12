@@ -1,36 +1,29 @@
 package tilo;
 
-import tilo.task.Deadline;
-import tilo.task.Event;
-import tilo.task.Task;
-import tilo.task.ToDo;
+import tilo.task.*;
 import tilo.ui.Ui;
-
-import java.util.ArrayList;
-import java.util.List;
+import tilo.task.TaskList;
 
 public class Tilo {
-    private static final int TASK_LIST_SIZE = 100;
-
     private boolean isRunning;
-    private final List<Task> tasks;
     private final Ui ui;
+    private final TaskList tasks;
 
     public Tilo() {
-        this.tasks = new ArrayList<>(TASK_LIST_SIZE);
+        this.tasks = new TaskList();
         this.ui = new Ui();
         this.isRunning = false;
     }
 
     private void addTask(String description) {
         Task newTask = new Task(description);
-        tasks.add(newTask);
+        tasks.addTask(newTask);
         printTaskAdded(newTask);
     }
 
     private void addToDo(String description) {
         Task newToDo = new ToDo(description);
-        tasks.add(newToDo);
+        tasks.addTask(newToDo);
         printTaskAdded(newToDo);
     }
 
@@ -52,7 +45,7 @@ public class Tilo {
         }
 
         Task newDeadline = new Deadline(description, by);
-        tasks.add(newDeadline);
+        tasks.addTask(newDeadline);
         printTaskAdded(newDeadline);
     }
 
@@ -77,7 +70,7 @@ public class Tilo {
         }
 
         Task newEvent = new Event(description, from, to);
-        tasks.add(newEvent);
+        tasks.addTask(newEvent);
         printTaskAdded(newEvent);
     }
 
@@ -86,7 +79,7 @@ public class Tilo {
     }
 
     private void listTasks() {
-        ui.showTaskList(tasks);
+        ui.showTaskList(tasks.getAllTasks());
     }
 
     private void markTask(Task task) {
@@ -111,7 +104,7 @@ public class Tilo {
                 throw new IndexOutOfBoundsException();
             }
 
-            Task task = tasks.get(taskNum);
+            Task task = tasks.getTask(taskNum);
             if (isMarking) {
                 markTask(task);
             } else {
