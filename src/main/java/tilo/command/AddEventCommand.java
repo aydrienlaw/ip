@@ -37,7 +37,7 @@ public class AddEventCommand extends Command {
     private String[] splitByFromDelimiter(String arguments) throws TiloException {
         String[] parts = arguments.split(" /from ", 2);
         if (parts.length != 2) {
-            throw new TiloException("Event format should be: event <description> /from <start> /to <end>");
+            throw TiloException.invalidEventFormat();
         }
         return parts;
     }
@@ -45,7 +45,7 @@ public class AddEventCommand extends Command {
     private String[] splitByToDelimiter(String fromPart) throws TiloException {
         String[] parts = fromPart.split(" /to ", 2);
         if (parts.length != 2) {
-            throw new TiloException("Event format should be: event <description> /from <start> /to <end>");
+            throw TiloException.invalidEventFormat();
         }
         return parts;
     }
@@ -53,7 +53,7 @@ public class AddEventCommand extends Command {
     private String extractDescription(String descriptionPart) throws TiloException {
         String description = descriptionPart.trim();
         if (description.isEmpty()) {
-            throw new TiloException("Event description cannot be empty");
+            throw TiloException.emptyTaskDescription("event");
         }
         return description;
     }
@@ -61,7 +61,7 @@ public class AddEventCommand extends Command {
     private String extractFrom(String fromPart) throws TiloException {
         String from = fromPart.trim();
         if (from.isEmpty()) {
-            throw new TiloException("Event start time cannot be empty");
+            throw TiloException.emptyEventFrom();
         }
         return from;
     }
@@ -69,7 +69,7 @@ public class AddEventCommand extends Command {
     private String extractTo(String toPart) throws TiloException {
         String to = toPart.trim();
         if (to.isEmpty()) {
-            throw new TiloException("Event end time cannot be empty");
+            throw TiloException.emptyEventTo();
         }
         return to;
     }

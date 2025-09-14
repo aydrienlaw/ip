@@ -16,7 +16,7 @@ public class Parser {
 
     private void validateUserInput(String userInput) throws TiloException {
         if (userInput == null || userInput.trim().isEmpty()) {
-            throw new TiloException("Please enter a command.");
+            throw TiloException.noCommand();
         }
     }
 
@@ -37,7 +37,7 @@ public class Parser {
         case "bye":
             return new ExitCommand();
         default:
-            throw new TiloException("I'm sorry, but I don't know what that means.");
+            throw TiloException.invalidCommand();
         }
     }
 }

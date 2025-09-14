@@ -22,14 +22,14 @@ public class MarkCommand extends Command {
     }
 
     private int parseTaskNumber(String arguments) throws TiloException {
-        if (arguments == null || arguments.trim().isEmpty()) {
-            throw new TiloException("Please specify a task number to mark");
+        if (arguments.trim().isEmpty()) {
+            throw TiloException.noTaskNumber("mark");
         }
 
         try {
             return Integer.parseInt(arguments.trim());
         } catch (NumberFormatException e) {
-            throw new TiloException("Please enter a valid task number");
+            throw TiloException.invalidTaskNumber();
         }
     }
 

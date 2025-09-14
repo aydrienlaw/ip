@@ -33,7 +33,7 @@ public class AddDeadlineCommand extends Command {
     private String[] splitByDelimiter(String arguments) throws TiloException {
         String[] parts = arguments.split(" /by ", 2);
         if (parts.length != 2) {
-            throw new TiloException("Deadline format should be: deadline <description> /by <date>");
+            throw TiloException.invalidDeadlineFormat();
         }
         return parts;
     }
@@ -41,7 +41,7 @@ public class AddDeadlineCommand extends Command {
     private String extractDescription(String descriptionPart) throws TiloException {
         String description = descriptionPart.trim();
         if (description.isEmpty()) {
-            throw new TiloException("Deadline description cannot be empty");
+            throw TiloException.emptyTaskDescription("deadline");
         }
         return description;
     }
@@ -49,7 +49,7 @@ public class AddDeadlineCommand extends Command {
     private String extractBy(String byPart) throws TiloException {
         String by = byPart.trim();
         if (by.isEmpty()) {
-            throw new TiloException("Deadline date cannot be empty");
+            throw TiloException.emptyDeadlineBy();
         }
         return by;
     }

@@ -22,7 +22,7 @@ public class AddToDoCommand extends Command {
     private String extractDescription(String descriptionPart) throws TiloException {
         String description = descriptionPart.trim();
         if (description.isEmpty()) {
-            throw new TiloException("The description of a todo cannot be empty.");
+            throw TiloException.emptyTaskDescription("todo");
         }
         return description;
     }
