@@ -3,7 +3,7 @@ package tilo;
 import tilo.command.Command;
 import tilo.exception.TiloException;
 import tilo.parser.Parser;
-import tilo.task.*;
+import tilo.storage.TaskList;
 import tilo.ui.Ui;
 
 public class Tilo {

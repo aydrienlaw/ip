@@ -1,6 +1,6 @@
 package tilo.command;
 
-import tilo.task.TaskList;
+import tilo.storage.TaskList;
 import tilo.ui.Ui;
 import tilo.task.Task;
 import tilo.exception.TiloException;
@@ -9,14 +9,14 @@ public class MarkCommand extends Command {
     private final int taskNumber;
 
     public MarkCommand(String arguments) throws TiloException {
-        this.taskNumber = parseTaskNumber(arguments);
+        this.taskNumber = parseTaskNumber(arguments) - 1;  // Convert to 0-based index
     }
 
     @Override
     public void execute(TaskList taskList, Ui ui) throws TiloException {
         validateTaskList(taskList);
 
-        Task task = taskList.getTask(taskNumber - 1); // Convert to 0-based index
+        Task task = taskList.getTask(taskNumber);
         task.markAsDone();
         ui.showTaskMarked(task);
     }
