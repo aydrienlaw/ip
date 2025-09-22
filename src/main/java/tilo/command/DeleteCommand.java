@@ -1,0 +1,41 @@
+package tilo.command;
+
+import tilo.exception.TiloException;
+import tilo.task.Task;
+import tilo.task.TaskList;
+import tilo.ui.Ui;
+
+public class DeleteCommand extends Command {
+    private final int taskNumber;
+
+    public DeleteCommand(String arguments) throws TiloException {
+        this.taskNumber = parseTaskNumber(arguments);
+    }
+
+    @Override
+    public void execute(TaskList taskList, Ui ui) throws TiloException {
+        validateTaskList(taskList);
+
+        Task task = taskList.getTask(taskNumber - 1); // Convert to 0-based index
+        task.markAsDone();
+        ui.showTaskMarked(task);
+    }
+
+    private int parseTaskNumber(String arguments) throws TiloException {
+        if (arguments.trim().isEmpty()) {
+            throw TiloException.noTaskNumber("delete");
+        }
+
+        try {
+            return Integer.parseInt(arguments.trim());
+        } catch (NumberFormatException e) {
+            throw TiloException.invalidTaskNumber();
+        }
+    }
+
+    private void validateTaskList(TaskList taskList) throws TiloException {
+        if (taskList.isEmpty()) {
+            throw TiloException.emptyTaskList("delete");
+        }
+    }
+}
