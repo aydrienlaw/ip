@@ -9,16 +9,16 @@ public class DeleteCommand extends Command {
     private final int taskNumber;
 
     public DeleteCommand(String arguments) throws TiloException {
-        this.taskNumber = parseTaskNumber(arguments);
+        this.taskNumber = parseTaskNumber(arguments) - 1;
     }
 
     @Override
     public void execute(TaskList taskList, Ui ui) throws TiloException {
         validateTaskList(taskList);
 
-        Task task = taskList.getTask(taskNumber - 1); // Convert to 0-based index
-        task.markAsDone();
-        ui.showTaskMarked(task);
+        Task deletedTask = taskList.getTask(taskNumber);
+        taskList.deleteTask(taskNumber);
+        ui.showTaskDeleted(deletedTask, taskList.size());
     }
 
     private int parseTaskNumber(String arguments) throws TiloException {

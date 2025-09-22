@@ -50,6 +50,12 @@ public class Ui {
         System.out.println(INDENT + "Now you have " + taskCount + " in the list");
     }
 
+    public void showTaskDeleted(Task task, int taskCount) {
+        System.out.println(INDENT + "Got it. I've deleted this task: ");
+        System.out.println(INDENT + " " + task);
+        System.out.println(INDENT + "Now you have " + taskCount + " in the list");
+    }
+
     public void showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
             System.out.println(INDENT + "No tasks to list.");
