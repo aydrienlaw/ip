@@ -1,6 +1,6 @@
 package tilo.command;
 
-import tilo.task.TaskList;
+import tilo.storage.TaskList;
 import tilo.ui.Ui;
 import tilo.exception.TiloException;
 

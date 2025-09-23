@@ -48,4 +48,12 @@ public class TiloException extends Exception {
     public static TiloException emptyTaskList(String operation) {
         return new TiloException("No tasks to " + operation + ".");
     }
+
+    public static TiloException corruptedLine(String line) {
+        return new TiloException("Corrupted line in storage file: " + line + ".");
+    }
+
+    public static TiloException saveFileError(String operation) {
+        return new TiloException("Error " + operation + " save file.");
+    }
 }

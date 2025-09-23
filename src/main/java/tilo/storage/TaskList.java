@@ -1,4 +1,6 @@
-package tilo.task;
+package tilo.storage;
+
+import tilo.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package tilo.command;
 
-import tilo.task.TaskList;
+import tilo.storage.TaskList;
 import tilo.ui.Ui;
 import tilo.task.Event;
 import tilo.exception.TiloException;
@@ -10,8 +10,8 @@ public class AddEventCommand extends Command {
     private final String from;
     private final String to;
 
-    public AddEventCommand(String arguments) throws TiloException {
-        String[] parsedArguments = parseEventArguments(arguments);
+    public AddEventCommand(String rawInput) throws TiloException {
+        String[] parsedArguments = parseEventArguments(rawInput);
         this.description = parsedArguments[0];
         this.from = parsedArguments[1];
         this.to = parsedArguments[2];
@@ -24,8 +24,8 @@ public class AddEventCommand extends Command {
         ui.showTaskAdded(newEvent, taskList.size());
     }
 
-    private String[] parseEventArguments(String arguments) throws TiloException {
-        String[] fromParts = splitByFromDelimiter(arguments);
+    private String[] parseEventArguments(String rawInput) throws TiloException {
+        String[] fromParts = splitByFromDelimiter(rawInput);
         String description = extractDescription(fromParts[0]);
         String[] toParts = splitByToDelimiter(fromParts[1]);
         String from = extractFrom(toParts[0]);
@@ -34,16 +34,16 @@ public class AddEventCommand extends Command {
         return new String[]{description, from, to};
     }
 
-    private String[] splitByFromDelimiter(String arguments) throws TiloException {
-        String[] parts = arguments.split(" /from ", 2);
+    private String[] splitByFromDelimiter(String rawInput) throws TiloException {
+        String[] parts = rawInput.split(" /from ", 2);
         if (parts.length != 2) {
             throw TiloException.invalidEventFormat();
         }
         return parts;
     }
 
-    private String[] splitByToDelimiter(String fromPart) throws TiloException {
-        String[] parts = fromPart.split(" /to ", 2);
+    private String[] splitByToDelimiter(String fromParts) throws TiloException {
+        String[] parts = fromParts.split(" /to ", 2);
         if (parts.length != 2) {
             throw TiloException.invalidEventFormat();
         }
