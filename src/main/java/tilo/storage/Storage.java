@@ -84,7 +84,7 @@ public class Storage {
             default:
                 throw TiloException.corruptedLine(rawInput);
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (Exception e) {
             throw TiloException.corruptedLine(rawInput);
         }
     }
