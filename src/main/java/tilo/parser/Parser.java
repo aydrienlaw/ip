@@ -28,6 +28,8 @@ public class Parser {
             return new AddDeadlineCommand(arguments);
         case "event":
             return new AddEventCommand(arguments);
+        case "delete":
+            return new DeleteCommand(arguments);
         case "list":
             return new ListCommand();
         case "mark":

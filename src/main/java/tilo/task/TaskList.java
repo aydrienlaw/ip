@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskList {
-    private static final int TASK_LIST_SIZE = 100;
-    private final List<Task> tasks;
+    private final ArrayList<Task> tasks;
 
     public TaskList() {
-        this.tasks = new ArrayList<>(TASK_LIST_SIZE);
+        this.tasks = new ArrayList<>();
     }
 
     public void addTask(Task task) {
         tasks.add(task);
+    }
+
+    public void deleteTask(int index) {
+        tasks.remove(index);
     }
 
     public Task getTask(int index) {
