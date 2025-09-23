@@ -8,8 +8,8 @@ import tilo.task.ToDo;
 public class AddToDoCommand extends Command {
     private final String description;
 
-    public AddToDoCommand(String argument) throws TiloException {
-        this.description = extractDescription(argument);
+    public AddToDoCommand(String rawInput) throws TiloException {
+        this.description = extractDescription(rawInput);
     }
 
     @Override

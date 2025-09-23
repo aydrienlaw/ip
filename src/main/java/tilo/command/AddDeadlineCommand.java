@@ -9,8 +9,8 @@ public class AddDeadlineCommand extends Command {
     private final String description;
     private final String by;
 
-    public AddDeadlineCommand(String arguments) throws TiloException {
-        String[] parsedArguments = parseDeadlineArguments(arguments);
+    public AddDeadlineCommand(String rawInput) throws TiloException {
+        String[] parsedArguments = parseDeadlineArguments(rawInput);
         this.description = parsedArguments[0];
         this.by = parsedArguments[1];
     }
@@ -22,16 +22,16 @@ public class AddDeadlineCommand extends Command {
         ui.showTaskAdded(newDeadline, taskList.size());
     }
 
-    private String[] parseDeadlineArguments(String arguments) throws TiloException {
-        String[] parts = splitByDelimiter(arguments);
+    private String[] parseDeadlineArguments(String rawInput) throws TiloException {
+        String[] parts = splitByDelimiter(rawInput);
         String description = extractDescription(parts[0]);
         String by = extractBy(parts[1]);
 
         return new String[]{description, by};
     }
 
-    private String[] splitByDelimiter(String arguments) throws TiloException {
-        String[] parts = arguments.split(" /by ", 2);
+    private String[] splitByDelimiter(String rawInput) throws TiloException {
+        String[] parts = rawInput.split(" /by ", 2);
         if (parts.length != 2) {
             throw TiloException.invalidDeadlineFormat();
         }

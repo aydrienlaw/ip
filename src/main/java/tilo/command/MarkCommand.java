@@ -8,8 +8,8 @@ import tilo.exception.TiloException;
 public class MarkCommand extends Command {
     private final int taskNumber;
 
-    public MarkCommand(String arguments) throws TiloException {
-        this.taskNumber = parseTaskNumber(arguments) - 1;  // Convert to 0-based index
+    public MarkCommand(String rawInput) throws TiloException {
+        this.taskNumber = extractTaskNumber(rawInput) - 1;  // Convert to 0-based index
     }
 
     @Override
@@ -21,13 +21,13 @@ public class MarkCommand extends Command {
         ui.showTaskMarked(task);
     }
 
-    private int parseTaskNumber(String arguments) throws TiloException {
-        if (arguments.trim().isEmpty()) {
+    private int extractTaskNumber(String rawInput) throws TiloException {
+        if (rawInput.trim().isEmpty()) {
             throw TiloException.noTaskNumber("mark");
         }
 
         try {
-            return Integer.parseInt(arguments.trim());
+            return Integer.parseInt(rawInput.trim());
         } catch (NumberFormatException e) {
             throw TiloException.invalidTaskNumber();
         }
