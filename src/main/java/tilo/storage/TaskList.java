@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskList {
-    private final ArrayList<Task> tasks;
+    private final List<Task> tasks;
 
     public TaskList() {
         this.tasks = new ArrayList<>();
+    }
+
+    public TaskList(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public void addTask(Task task) {

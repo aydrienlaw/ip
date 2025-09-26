@@ -1,65 +1,79 @@
 package tilo;
 
 import tilo.command.Command;
-import tilo.task.Task;
 import tilo.exception.TiloException;
 import tilo.parser.Parser;
 import tilo.storage.Storage;
 import tilo.storage.TaskList;
 import tilo.ui.Ui;
 
-import java.util.List;
-
 public class Tilo {
     private final Ui ui;
-    private final TaskList taskList;
+    private final TaskList tasks;
     private final Parser parser;
     private final Storage storage;
 
     public Tilo() {
-        this.taskList = new TaskList();
         this.ui = new Ui();
         this.parser = new Parser();
         this.storage = new Storage("./data/tilo.txt");
+        this.tasks = loadTasks();
+    }
+
+    private TaskList loadTasks() {
+        try {
+            return new TaskList(storage.load());
+        } catch (TiloException e) {
+            ui.showError(e.getMessage());
+            ui.showMessage("Starting with empty task list.");
+            return new TaskList();
+        }
+    }
+
+    private void saveTasks() {
+        try {
+            storage.save(tasks.getAllTasks());
+        } catch (TiloException e) {
+            ui.showError(e.getMessage());
+            ui.showMessage("Your changes may not be persisted.");
+        }
+    }
+
+    private boolean processNextCommand() {
+        String userInput = ui.readCommand();
+        ui.showBorder();
+
+        try {
+            Command command = parser.parse(userInput);
+            command.execute(tasks, ui);
+            return command.isRunning();
+        } catch (TiloException e) {
+            ui.showError(e.getMessage());
+            return true; // Continue running on error
+        } finally {
+            ui.showBorder();
+        }
+    }
+
+    private void shutdown() {
+        ui.showGoodbye();
+        saveTasks();
     }
 
     public void run() {
         ui.showWelcome();
-        try {
-            List<Task> loadedTasks = storage.load();
-            for (Task task : loadedTasks) {
-                taskList.addTask(task);
-            }
-        } catch (TiloException e) {
-            ui.showError(e.getMessage());
+        while (processNextCommand()) {
+            // Loop continues until exit command
         }
-
-        boolean isRunning = true;
-
-        while (isRunning) {
-            String userInput = ui.readCommand();
-            ui.showBorder();
-            try {
-                Command command = parser.parse(userInput);
-                command.execute(taskList, ui);
-                isRunning = command.isRunning();
-            } catch (TiloException e) {
-                ui.showError(e.getMessage());
-            }
-
-            ui.showBorder();
-        }
-
-        ui.showGoodbye();
-        try {
-            storage.save(taskList.getAllTasks());
-        } catch (TiloException e) {
-            ui.showError(e.getMessage());
-        }
+        shutdown();
     }
 
     public static void main(String[] args) {
-        Tilo tilo = new Tilo();
-        tilo.run();
+        try {
+            new Tilo().run();
+        } catch (Exception e) {
+            System.err.println("Fatal error occurred: " + e.getMessage());
+            System.exit(1);
+        }
     }
 }

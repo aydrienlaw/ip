@@ -40,6 +40,10 @@ public class Ui {
         showBorder();
     }
 
+    public void showMessage(String message) {
+        System.out.println(INDENT + message);
+    }
+
     public void showError(String errorMessage) {
         System.out.println(INDENT + errorMessage);
     }
