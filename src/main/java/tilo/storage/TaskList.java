@@ -1,5 +1,6 @@
 package tilo.storage;
 
+import tilo.exception.TiloException;
 import tilo.task.Task;
 
 import java.util.ArrayList;
@@ -13,20 +14,33 @@ public class TaskList {
     }
 
     public TaskList(List<Task> tasks) {
-        this.tasks = tasks;
+        this.tasks = new ArrayList<>(tasks);
     }
 
     public void addTask(Task task) {
         tasks.add(task);
     }
 
-    public void deleteTask(int index) {
-        tasks.remove(index);
+    public Task markTask(int taskNumber) throws TiloException {
+        Task task = getTask(taskNumber);
+        task.markAsDone();
+        return task;
     }
 
-    public Task getTask(int index) {
-        validateTaskIndex(index);
-        return tasks.get(index);
+    public Task unmarkTask(int taskNumber) throws TiloException {
+        Task task = getTask(taskNumber);
+        task.markAsNotDone();
+        return task;
+    }
+
+    public void deleteTask(int taskNumber) throws TiloException {
+        validateTaskNumber(taskNumber);
+        tasks.remove(taskNumber);
+    }
+
+    public Task getTask(int taskNumber) throws TiloException {
+        validateTaskNumber(taskNumber);
+        return tasks.get(taskNumber);
     }
 
     public List<Task> getAllTasks() {
@@ -41,9 +55,9 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    private void validateTaskIndex(int index) {
-        if (index < 0 || index >= tasks.size()) {
-            throw new IndexOutOfBoundsException("Task number out of range");
+    private void validateTaskNumber(int taskNumber) throws TiloException {
+        if (taskNumber < 0 || taskNumber >= tasks.size()) {
+            throw TiloException.invalidTaskNumber();
         }
     }
 }
