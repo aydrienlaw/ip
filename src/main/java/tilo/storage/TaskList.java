@@ -47,6 +47,23 @@ public class TaskList {
         return new ArrayList<>(tasks);
     }
 
+    public List<Task> findTasks(String keyword) throws TiloException {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw TiloException.emptyFindKeyword();
+        }
+
+        List<Task> matchingTasks = new ArrayList<>();
+        String lowercaseKeyword = keyword.toLowerCase().trim();
+
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(lowercaseKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+
+        return matchingTasks;
+    }
+
     public int size() {
         return tasks.size();
     }

@@ -13,7 +13,7 @@ public class Ui {
             + INDENT + "   |    |  |   |    |___/    |    \\\n"
             + INDENT + "   |____|  |___|_______ \\_______  /\n"
             + INDENT + "                       \\/       \\/";
-    private static final String WELCOME_MESSAGE = "Hello! I'm Tilo\nWhat can I do for you?";
+    private static final String WELCOME_MESSAGE = "Hello! I'm Tilo\n" + INDENT + "What can I do for you?";
     private static final String GOODBYE_MESSAGE = "Bye. Hope to see you again soon!";
     private static final String NO_TASKS_MESSAGE = "No tasks to list.";
 
@@ -92,6 +92,11 @@ public class Ui {
     public void showTaskUnmarked(Task task) {
         printIndented(TASK_UNMARKED_TEMPLATE);
         printIndented(" " + task);
+    }
+
+    public void showMatchingTasks(List<Task> tasks) {
+        printIndented("Here are the matching tasks in your list:");
+        showTaskList(tasks);
     }
 
     private void printIndented(String line) {
