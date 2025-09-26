@@ -13,6 +13,16 @@ public class Ui {
             + INDENT + "   |    |  |   |    |___/    |    \\\n"
             + INDENT + "   |____|  |___|_______ \\_______  /\n"
             + INDENT + "                       \\/       \\/";
+    private static final String WELCOME_MESSAGE = "Hello! I'm Tilo\nWhat can I do for you?";
+    private static final String GOODBYE_MESSAGE = "Bye. Hope to see you again soon!";
+    private static final String NO_TASKS_MESSAGE = "No tasks to list.";
+
+    // Message templates
+    private static final String TASK_ADDED_TEMPLATE = "Got it. I've added this task:";
+    private static final String TASK_DELETED_TEMPLATE = "Got it. I've deleted this task:";
+    private static final String TASK_COUNT_TEMPLATE = "Now you have %d task%s in the list";
+    private static final String TASK_MARKED_DONE_TEMPLATE = "Nice! I've marked this task as done:";
+    private static final String TASK_UNMARKED_TEMPLATE = "OK, I've marked this task as not done yet:";
 
     private final Scanner scanner;
 
@@ -21,63 +31,75 @@ public class Ui {
     }
 
     public String readCommand() {
-        return scanner.nextLine();
+        return scanner.nextLine().trim();
     }
 
     public void showBorder() {
-        System.out.println(INDENT + BORDER);
+        printIndented(BORDER);
     }
 
     public void showWelcome() {
-        String greetMsg = INDENT + "Hello! I'm Tilo\n"
-                + INDENT + "What can I do for you?";
-        System.out.println(LOGO + "\n" + greetMsg);
+        System.out.println(LOGO);
+        printIndented(WELCOME_MESSAGE);
         showBorder();
     }
 
     public void showGoodbye() {
-        System.out.println(INDENT + "Bye. Hope to see you again soon!");
+        printIndented(GOODBYE_MESSAGE);
         showBorder();
     }
 
     public void showMessage(String message) {
-        System.out.println(INDENT + message);
+        if (message != null && !message.isEmpty()) {
+            printIndented(message);
+        }
     }
 
     public void showError(String errorMessage) {
-        System.out.println(INDENT + errorMessage);
+        if (errorMessage != null && !errorMessage.isEmpty()) {
+            printIndented("Error: " + errorMessage);
+        }
     }
 
     public void showTaskAdded(Task task, int taskCount) {
-        System.out.println(INDENT + "Got it. I've added this task: ");
-        System.out.println(INDENT + " " + task);
-        System.out.println(INDENT + "Now you have " + taskCount + " in the list");
+        printIndented(TASK_ADDED_TEMPLATE);
+        printIndented(" " + task);
+        printTaskCount(taskCount);
     }
 
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println(INDENT + "Got it. I've deleted this task: ");
-        System.out.println(INDENT + " " + task);
-        System.out.println(INDENT + "Now you have " + taskCount + " in the list");
+        printIndented(TASK_DELETED_TEMPLATE);
+        printIndented(" " + task);
+        printTaskCount(taskCount);
     }
 
     public void showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            System.out.println(INDENT + "No tasks to list.");
+            printIndented(NO_TASKS_MESSAGE);
             return;
         }
 
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(INDENT + (i + 1) + ". " + tasks.get(i));
+            printIndented((i + 1) + ". " + tasks.get(i));
         }
     }
 
     public void showTaskMarked(Task task) {
-        System.out.println(INDENT + "Nice! I've marked this task as done:");
-        System.out.println(INDENT + "  " + task);
+        printIndented(TASK_MARKED_DONE_TEMPLATE);
+        printIndented(" " + task);
     }
 
     public void showTaskUnmarked(Task task) {
-        System.out.println(INDENT + "OK, I've marked this task as not done yet:");
-        System.out.println(INDENT + "  " + task);
+        printIndented(TASK_UNMARKED_TEMPLATE);
+        printIndented(" " + task);
+    }
+
+    private void printIndented(String line) {
+        System.out.println(INDENT + line);
+    }
+
+    private void printTaskCount(int taskCount) {
+        String plural = taskCount == 1 ? "" : "s";
+        System.out.println(INDENT + String.format(TASK_COUNT_TEMPLATE, taskCount, plural));
     }
 }
