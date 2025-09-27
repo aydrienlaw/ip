@@ -9,7 +9,7 @@ public class AddToDoCommand extends Command {
     private final String description;
 
     public AddToDoCommand(String rawInput) throws TiloException {
-        this.description = extractDescription(rawInput);
+        this.description = parseDescription(rawInput);
     }
 
     @Override
@@ -19,11 +19,11 @@ public class AddToDoCommand extends Command {
         ui.showTaskAdded(newToDo, taskList.size());
     }
 
-    private String extractDescription(String descriptionPart) throws TiloException {
-        String description = descriptionPart.trim();
+    private String parseDescription(String description) throws TiloException {
+        String trimmedDescription = description.trim();
         if (description.isEmpty()) {
-            throw TiloException.emptyTaskDescription("todo");
+            throw TiloException.emptyField("description");
         }
-        return description;
+        return trimmedDescription;
     }
 }

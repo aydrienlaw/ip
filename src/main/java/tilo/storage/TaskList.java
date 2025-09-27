@@ -21,6 +21,30 @@ public class TaskList {
         tasks.add(task);
     }
 
+    public Task deleteTask(int taskNumber) throws TiloException {
+        validateTaskNumber(taskNumber);
+        int index = taskNumber - 1;
+        return tasks.remove(index);
+    }
+
+    public Task getTask(int taskNumber) throws TiloException {
+        validateTaskNumber(taskNumber);
+        int index = taskNumber - 1;
+        return tasks.get(index);
+    }
+
+    public List<Task> getAllTasks() {
+        return tasks;
+    }
+
+    public int size() {
+        return tasks.size();
+    }
+
+    public boolean isEmpty() {
+        return tasks.isEmpty();
+    }
+
     public Task markTask(int taskNumber) throws TiloException {
         Task task = getTask(taskNumber);
         task.markAsDone();
@@ -33,48 +57,26 @@ public class TaskList {
         return task;
     }
 
-    public void deleteTask(int taskNumber) throws TiloException {
-        validateTaskNumber(taskNumber);
-        tasks.remove(taskNumber);
-    }
-
-    public Task getTask(int taskNumber) throws TiloException {
-        validateTaskNumber(taskNumber);
-        return tasks.get(taskNumber);
-    }
-
-    public List<Task> getAllTasks() {
-        return new ArrayList<>(tasks);
-    }
-
-    public List<Task> findTasks(String keyword) throws TiloException {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            throw TiloException.emptyFindKeyword();
-        }
-
-        List<Task> matchingTasks = new ArrayList<>();
+    public TaskList findTasks(String keyword) {
+        TaskList matchingTasks = new TaskList();
         String lowercaseKeyword = keyword.toLowerCase().trim();
 
         for (Task task : tasks) {
             if (task.getDescription().toLowerCase().contains(lowercaseKeyword)) {
-                matchingTasks.add(task);
+                matchingTasks.addTask(task);
             }
         }
 
         return matchingTasks;
     }
 
-    public int size() {
-        return tasks.size();
-    }
-
-    public boolean isEmpty() {
-        return tasks.isEmpty();
-    }
-
     private void validateTaskNumber(int taskNumber) throws TiloException {
-        if (taskNumber < 0 || taskNumber >= tasks.size()) {
-            throw TiloException.invalidTaskNumber();
+        if (isEmpty()) {
+            throw TiloException.emptyTaskList();
+        }
+
+        if (taskNumber <= 0 || taskNumber > tasks.size()) {
+            throw TiloException.invalidTaskRange(taskNumber, size());
         }
     }
 }

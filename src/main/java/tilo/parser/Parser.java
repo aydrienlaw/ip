@@ -5,19 +5,21 @@ import tilo.exception.TiloException;
 
 public class Parser {
     public Command parse(String userInput) throws TiloException {
-        validateUserInput(userInput);
+        ParsedInput parsed = parseInput(userInput);
 
-        String[] words = userInput.trim().split(" ", 2);
+        return createCommand(parsed.commandWord, parsed.arguments);
+    }
+
+    private ParsedInput parseInput(String userInput) throws TiloException {
+        if (userInput == null || userInput.trim().isEmpty()) {
+            throw TiloException.emptyCommand();
+        }
+
+        String[] words = userInput.trim().split("\\s+", 2);
         String commandWord = words[0].toLowerCase();
         String arguments = words.length > 1 ? words[1].trim() : "";
 
-        return createCommand(commandWord, arguments);
-    }
-
-    private void validateUserInput(String userInput) throws TiloException {
-        if (userInput == null || userInput.trim().isEmpty()) {
-            throw TiloException.noCommand();
-        }
+        return new ParsedInput(commandWord, arguments);
     }
 
     public Command createCommand(String commandWord, String arguments) throws TiloException {
@@ -42,6 +44,16 @@ public class Parser {
             return new ExitCommand();
         default:
             throw TiloException.invalidCommand();
+        }
+    }
+
+    private static class ParsedInput {
+        final String commandWord;
+        final String arguments;
+
+        ParsedInput(String commandWord, String arguments) {
+            this.commandWord = commandWord;
+            this.arguments = arguments;
         }
     }
 }

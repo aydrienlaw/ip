@@ -6,13 +6,15 @@ import tilo.task.Deadline;
 import tilo.exception.TiloException;
 
 public class AddDeadlineCommand extends Command {
+    private static final String DEADLINE_DELIMITER = " /by ";
+
     private final String description;
     private final String by;
 
     public AddDeadlineCommand(String rawInput) throws TiloException {
-        String[] parsedArguments = parseDeadlineArguments(rawInput);
-        this.description = parsedArguments[0];
-        this.by = parsedArguments[1];
+        ParsedDeadlineInput parts = parseDeadlineInput(rawInput);
+        this.description = parts.description;
+        this.by = parts.by;
     }
 
     @Override
@@ -22,35 +24,32 @@ public class AddDeadlineCommand extends Command {
         ui.showTaskAdded(newDeadline, taskList.size());
     }
 
-    private String[] parseDeadlineArguments(String rawInput) throws TiloException {
-        String[] parts = splitByDelimiter(rawInput);
-        String description = extractDescription(parts[0]);
-        String by = extractBy(parts[1]);
-
-        return new String[]{description, by};
-    }
-
-    private String[] splitByDelimiter(String rawInput) throws TiloException {
-        String[] parts = rawInput.split(" /by ", 2);
+    private ParsedDeadlineInput parseDeadlineInput(String rawInput) throws TiloException {
+        String[] parts = rawInput.split(DEADLINE_DELIMITER, 2);
         if (parts.length != 2) {
             throw TiloException.invalidDeadlineFormat();
         }
-        return parts;
+        String description = parseField(parts[0], "description");
+        String by = parseField(parts[1], "by");
+
+        return new ParsedDeadlineInput(description, by);
     }
 
-    private String extractDescription(String descriptionPart) throws TiloException {
-        String description = descriptionPart.trim();
-        if (description.isEmpty()) {
-            throw TiloException.emptyTaskDescription("deadline");
+    private String parseField(String field, String fieldName) throws TiloException {
+        String trimmedField = field.trim();
+        if (trimmedField.isEmpty()) {
+            throw TiloException.emptyField(fieldName);
         }
-        return description;
+        return trimmedField;
     }
 
-    private String extractBy(String byPart) throws TiloException {
-        String by = byPart.trim();
-        if (by.isEmpty()) {
-            throw TiloException.emptyDeadlineBy();
+    private static class ParsedDeadlineInput {
+        final String description;
+        final String by;
+
+        ParsedDeadlineInput(String description, String by) {
+            this.description = description;
+            this.by = by;
         }
-        return by;
     }
 }

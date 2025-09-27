@@ -16,8 +16,18 @@ public class Tilo {
     public Tilo() {
         this.ui = new Ui();
         this.parser = new Parser();
-        this.storage = new Storage("./data/tilo.txt");
+        this.storage = loadStorage();
         this.tasks = loadTasks();
+    }
+
+    private Storage loadStorage() {
+        try {
+            return new Storage("./data/tilo.txt");
+        } catch (TiloException e) {
+            ui.showError(e.getMessage());
+            ui.showMessage("Storage initialization failed. Exiting.");
+            throw new RuntimeException(e);
+        }
     }
 
     private TaskList loadTasks() {

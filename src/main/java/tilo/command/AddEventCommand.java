@@ -6,15 +6,18 @@ import tilo.task.Event;
 import tilo.exception.TiloException;
 
 public class AddEventCommand extends Command {
+    private static final String FROM_DELIMITER = " /from ";
+    private static final String TO_DELIMITER = " /to ";
+
     private final String description;
     private final String from;
     private final String to;
 
     public AddEventCommand(String rawInput) throws TiloException {
-        String[] parsedArguments = parseEventArguments(rawInput);
-        this.description = parsedArguments[0];
-        this.from = parsedArguments[1];
-        this.to = parsedArguments[2];
+        ParsedEventInput parts = parseEventInput(rawInput);
+        this.description = parts.description;
+        this.from = parts.from;
+        this.to = parts.to;
     }
 
     @Override
@@ -24,53 +27,43 @@ public class AddEventCommand extends Command {
         ui.showTaskAdded(newEvent, taskList.size());
     }
 
-    private String[] parseEventArguments(String rawInput) throws TiloException {
-        String[] fromParts = splitByFromDelimiter(rawInput);
-        String description = extractDescription(fromParts[0]);
-        String[] toParts = splitByToDelimiter(fromParts[1]);
-        String from = extractFrom(toParts[0]);
-        String to = extractTo(toParts[1]);
-
-        return new String[]{description, from, to};
-    }
-
-    private String[] splitByFromDelimiter(String rawInput) throws TiloException {
-        String[] parts = rawInput.split(" /from ", 2);
-        if (parts.length != 2) {
+    private ParsedEventInput parseEventInput(String rawInput) throws TiloException {
+        // First split by /from
+        String[] fromParts = rawInput.split(FROM_DELIMITER, 2);
+        if (fromParts.length != 2) {
             throw TiloException.invalidEventFormat();
         }
-        return parts;
-    }
 
-    private String[] splitByToDelimiter(String fromParts) throws TiloException {
-        String[] parts = fromParts.split(" /to ", 2);
-        if (parts.length != 2) {
+        // Then split the second part by /to
+        String[] toParts = fromParts[1].split(TO_DELIMITER, 2);
+        if (toParts.length != 2) {
             throw TiloException.invalidEventFormat();
         }
-        return parts;
+
+        String description = parseField(fromParts[0], "description");
+        String from = parseField(toParts[0], "from");
+        String to = parseField(toParts[1], "to");
+
+        return new ParsedEventInput(description, from, to);
     }
 
-    private String extractDescription(String descriptionPart) throws TiloException {
-        String description = descriptionPart.trim();
-        if (description.isEmpty()) {
-            throw TiloException.emptyTaskDescription("event");
+    private String parseField(String field, String fieldName) throws TiloException {
+        String trimmedField = field.trim();
+        if (trimmedField.isEmpty()) {
+            throw TiloException.emptyField(fieldName);
         }
-        return description;
+        return trimmedField;
     }
 
-    private String extractFrom(String fromPart) throws TiloException {
-        String from = fromPart.trim();
-        if (from.isEmpty()) {
-            throw TiloException.emptyEventFrom();
-        }
-        return from;
-    }
+    private static class ParsedEventInput {
+        final String description;
+        final String from;
+        final String to;
 
-    private String extractTo(String toPart) throws TiloException {
-        String to = toPart.trim();
-        if (to.isEmpty()) {
-            throw TiloException.emptyEventTo();
+        ParsedEventInput(String description, String from, String to) {
+            this.description = description;
+            this.from = from;
+            this.to = to;
         }
-        return to;
     }
 }

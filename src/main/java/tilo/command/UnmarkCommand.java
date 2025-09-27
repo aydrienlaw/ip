@@ -9,31 +9,25 @@ public class UnmarkCommand extends Command {
     private final int taskNumber;
 
     public UnmarkCommand(String rawInput) throws TiloException {
-        this.taskNumber = extractTaskNumber(rawInput) - 1;
+        this.taskNumber = parseTaskNumber(rawInput);
     }
 
     @Override
     public void execute(TaskList taskList, Ui ui) throws TiloException {
-        validateTaskList(taskList);
         Task task = taskList.unmarkTask(taskNumber);
         ui.showTaskUnmarked(task);
     }
 
-    private int extractTaskNumber(String rawInput) throws TiloException {
-        if (rawInput.trim().isEmpty()) {
-            throw TiloException.noTaskNumber("unmark");
+    private int parseTaskNumber(String input) throws TiloException {
+        String trimmed = input.trim();
+        if (trimmed.isEmpty()) {
+            throw TiloException.emptyField("taskNumber");
         }
 
         try {
-            return Integer.parseInt(rawInput.trim());
+            return Integer.parseInt(trimmed);
         } catch (NumberFormatException e) {
-            throw TiloException.invalidTaskNumber();
-        }
-    }
-
-    private void validateTaskList(TaskList taskList) throws TiloException {
-        if (taskList.isEmpty()) {
-            throw TiloException.emptyTaskList("unmark");
+            throw TiloException.invalidTaskNumber(trimmed);
         }
     }
 }
