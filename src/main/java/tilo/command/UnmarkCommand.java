@@ -15,9 +15,7 @@ public class UnmarkCommand extends Command {
     @Override
     public void execute(TaskList taskList, Ui ui) throws TiloException {
         validateTaskList(taskList);
-
-        Task task = taskList.getTask(taskNumber); // Convert to 0-based index
-        task.markAsNotDone();
+        Task task = taskList.unmarkTask(taskNumber);
         ui.showTaskUnmarked(task);
     }
 

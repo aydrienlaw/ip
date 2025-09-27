@@ -15,9 +15,7 @@ public class MarkCommand extends Command {
     @Override
     public void execute(TaskList taskList, Ui ui) throws TiloException {
         validateTaskList(taskList);
-
-        Task task = taskList.getTask(taskNumber);
-        task.markAsDone();
+        Task task = taskList.markTask(taskNumber);
         ui.showTaskMarked(task);
     }
 

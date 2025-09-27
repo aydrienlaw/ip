@@ -42,7 +42,15 @@ public class TiloException extends Exception {
     }
 
     public static TiloException invalidTaskNumber() {
-        return new TiloException("Please enter a valid task number.");
+        return new TiloException("Invalid task number.");
+    }
+
+    public static TiloException invalidFilePath() {
+        return new TiloException("File path cannot be null or empty.");
+    }
+
+    public static TiloException emptyFindKeyword() {
+        return new TiloException("Find keyword cannot be null or empty.");
     }
 
     public static TiloException emptyTaskList(String operation) {
