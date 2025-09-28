@@ -2,40 +2,56 @@ package tilo.command;
 
 import tilo.exception.TiloException;
 import tilo.task.Task;
-import tilo.task.TaskList;
+import tilo.storage.TaskList;
 import tilo.ui.Ui;
 
+/**
+ * Command for deleting a task from the task list.
+ * Handles parsing of task numbers and validation.
+ */
 public class DeleteCommand extends Command {
     private final int taskNumber;
 
+    /**
+     * Creates a new DeleteCommand by parsing the task number from arguments.
+     *
+     * @param arguments the command arguments containing the task number
+     * @throws TiloException if the task number is invalid or empty
+     */
     public DeleteCommand(String arguments) throws TiloException {
-        this.taskNumber = parseTaskNumber(arguments) - 1;
+        this.taskNumber = parseTaskNumber(arguments);
     }
 
+    /**
+     * Executes the command by deleting the specified task.
+     *
+     * @param taskList the task list to delete the task from
+     * @param ui the UI for displaying confirmation
+     * @throws TiloException if the task number is out of range
+     */
     @Override
     public void execute(TaskList taskList, Ui ui) throws TiloException {
-        validateTaskList(taskList);
-
-        Task deletedTask = taskList.getTask(taskNumber);
-        taskList.deleteTask(taskNumber);
+        Task deletedTask = taskList.deleteTask(taskNumber);
         ui.showTaskDeleted(deletedTask, taskList.size());
     }
 
-    private int parseTaskNumber(String arguments) throws TiloException {
-        if (arguments.trim().isEmpty()) {
-            throw TiloException.noTaskNumber("delete");
+    /**
+     * Parses and validates the task number from raw input.
+     *
+     * @param input the raw task number input
+     * @return the parsed task number
+     * @throws TiloException if the input is empty or not a valid integer
+     */
+    private int parseTaskNumber(String input) throws TiloException {
+        String trimmed = input.trim();
+        if (trimmed.isEmpty()) {
+            throw TiloException.emptyField("taskNumber");
         }
 
         try {
-            return Integer.parseInt(arguments.trim());
+            return Integer.parseInt(trimmed);
         } catch (NumberFormatException e) {
-            throw TiloException.invalidTaskNumber();
-        }
-    }
-
-    private void validateTaskList(TaskList taskList) throws TiloException {
-        if (taskList.isEmpty()) {
-            throw TiloException.emptyTaskList("delete");
+            throw TiloException.invalidTaskNumber(trimmed);
         }
     }
 }
