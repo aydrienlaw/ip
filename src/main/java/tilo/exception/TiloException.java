@@ -110,7 +110,7 @@ public class TiloException extends Exception {
      * @return TiloException for corrupted line
      */
     public static TiloException corruptedLine(String line) {
-        return new TiloException("Cound corrupted data in storage file: " + line + ".");
+        return new TiloException("Found corrupted data in storage file: " + line + ".");
     }
 
     /**

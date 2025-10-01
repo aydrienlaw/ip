@@ -162,7 +162,7 @@ public class Storage {
             return new Event(description, from, to);
 
         default:
-            throw TiloException.corruptedLine("(Unknown task type '" + taskType + "': " + originalLine);
+            throw TiloException.corruptedLine("Unknown task type '" + taskType + "': " + originalLine);
         }
     }
 
